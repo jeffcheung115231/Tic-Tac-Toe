@@ -1,0 +1,103 @@
+*Tic-Tac-Toe
+
+import random
+
+def print_board(board):
+    """印出井字棋棋盤"""
+    print("  -----------  ")
+    for row in board:
+        print(" |", end="")
+        for cell in row:
+            print(f" {cell} |", end="")
+        print("\n  -----------  ")
+
+def get_player_move(player):
+    """取得玩家的落子位置"""
+    while True:
+        try:
+            row = int(input(f"玩家 {player}，落邊行 (1-3): ")) - 1
+            col = int(input(f"玩家 {player}，落邊格 (1-3): ")) - 1
+            if 0 <= row <= 2 and 0 <= col <= 2:
+                return row, col
+            else:
+                print("輸入錯啦！請輸入 1 至 3 之間嘅數字。")
+        except ValueError:
+            print("輸入錯啦！請輸入數字。")
+
+def check_win(board, player):
+    """檢查玩家是否贏了"""
+    # 檢查橫行
+    for row in board:
+        if row.count(player) == 3:
+            return True
+
+    # 檢查直行
+    for col in range(3):
+        if board[0][col] == player and board[1][col] == player and board[2][col] == player:
+            return True
+
+    # 檢查斜行
+    if board[0][0] == player and board[1][1] == player and board[2][2] == player:
+        return True
+    if board[0][2] == player and board[1][1] == player and board[2][0] == player:
+        return True
+
+    return False
+
+def is_board_full(board):
+    """檢查棋盤是否已滿"""
+    for row in board:
+        for cell in row:
+            if cell == " ":
+                return False
+    return True
+
+def play_round(player1, player2):
+    """玩一局井字棋"""
+    board = [[" " for _ in range(3)] for _ in range(3)]
+    current_player = random.choice([player1, player2])  # 隨機決定先手
+
+    print("歡迎嚟玩井字棋！")
+    print_board(board)
+
+    while True:
+        row, col = get_player_move(current_player)
+
+        if board[row][col] == " ":
+            board[row][col] = current_player
+            print_board(board)
+
+            if check_win(board, current_player):
+                print(f"玩家 {current_player} 贏咗！")
+                return current_player
+            elif is_board_full(board):
+                print("打和啦！")
+                return "Draw"
+            else:
+                current_player = player2 if current_player == player1 else player1
+        else:
+            print("呢個位已經有棋啦！請再試一次。")
+
+def main():
+    """井字棋遊戲主程式"""
+    player1 = input("玩家 1，請輸入你的名字：")
+    player2 = input("玩家 2，請輸入你的名字：")
+
+    winner = None
+    rounds_played = 0
+    while rounds_played < 3:
+        print(f"\n開始第 {rounds_played + 1} 關")
+        round_winner = play_round(player1, player2)
+        if round_winner == player1:
+            winner = player1
+        elif round_winner == player2:
+            winner = player2
+        rounds_played += 1
+
+    if winner:
+        print(f"\n{winner} 贏咗三關，恭喜！")
+    else:
+        print("\n打和啦！")
+
+if __name__ == "__main__":
+    main()
